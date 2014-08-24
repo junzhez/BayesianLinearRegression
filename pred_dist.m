@@ -28,10 +28,16 @@ for i = 1 : len
     s_n = pinv(pinv(s_prev) + 25 * X_sample(:,i) * X_sample(:,i)');
 
     m_n = s_n * (pinv(s_prev) * m_prev + 25 * X_sample(:,i) * t(i)');
+    
+    pred_s = (1/25*eye(201,201) + X' * s_n * X);
+    
+    pred_m = m_n' * X;
 
-    w_learned = mvnrnd(m_n, s_n, 5);
+    t_pred = mvnrnd(pred_m, pred_s, 10000);
 
-    Y = (w_learned * X);
+    m_t_pred = mean(t_pred);
+    
+    s_t_pred = std(t_pred);
 
     figure(i);
     
@@ -39,7 +45,7 @@ for i = 1 : len
     
     hold on;
     
-    plot(repmat(X(2,:)', 1, 5), Y', 'b-');
+    errorbar(X(2,:), m_t_pred, s_t_pred);
 
     hold on;
     
