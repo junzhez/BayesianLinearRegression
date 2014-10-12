@@ -17,6 +17,7 @@ X_sample = zeros(2, len);
 t = zeros(1, len);
 
 for i = 1 : len
+    % Add new sampled point
     X_sample_tmp = [1 ; -1 + 2 * rand(1, 1)];
 
     X_sample(:, i) = X_sample_tmp;
@@ -25,10 +26,12 @@ for i = 1 : len
 
     t(i) = (w_o * X_sample(:,i)) + e_sample;
 
+    % Update m_N and S_N for p(w|t) = N(w|m_N, S_N)
     s_n = pinv(pinv(s_prev) + 25 * X_sample(:,i) * X_sample(:,i)');
 
     m_n = s_n * (pinv(s_prev) * m_prev + 25 * X_sample(:,i) * t(i)');
 
+    % Sample 5 weight w, with updated prob model
     w_learned = mvnrnd(m_n, s_n, 5);
 
     Y = (w_learned * X);

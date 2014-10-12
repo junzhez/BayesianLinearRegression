@@ -25,10 +25,13 @@ for i = 1 : len
 
     t(i) = (w_o * X_sample(:,i)) + e_sample;
 
+    % Update m_N and S_N for p(w|t) = N(w|m_N, S_N)
     s_n = pinv(pinv(s_prev) + 25 * X_sample(:,i) * X_sample(:,i)');
 
     m_n = s_n * (pinv(s_prev) * m_prev + 25 * X_sample(:,i) * t(i)');
     
+    % We do predictive model in this case
+    % p(t | x, t, a, b) = N(t|m_N' * theta(X), 1/b, theta(X)'*S_N * theta(X))
     pred_s = (1/25*eye(201,201) + X' * s_n * X);
     
     pred_m = m_n' * X;
